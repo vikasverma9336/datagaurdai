@@ -300,11 +300,13 @@ body,
 
 .dg-popup-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 12px;
   padding: 4px 2px 12px 2px;
   border-bottom: 1px solid #dbe3ea;
+  text-align: center;
 }
 
 .dg-popup-logo {
