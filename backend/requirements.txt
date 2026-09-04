@@ -1,0 +1,9 @@
+# DataGuard AI backend (backend/server.py)
+#
+# No third-party packages are required — the server is built entirely on the
+# Python standard library (http.server, sqlite3, json, urllib.parse).
+#
+# Requires: Python 3.10+
+#
+# Run with:
+#   python backend/server.py

@@ -114,7 +114,7 @@ User Decision: BLOCK | REDACT | ALLOW
 ### Prerequisites
 
 - Node.js 16+ and npm
-- Python 3 (for the local demo backend)
+- Python 3.10+ (for the local demo backend)
 - Google Chrome or Chromium-based browser
 
 ### Setup
@@ -128,6 +128,9 @@ npm run build
 
 # Run tests
 npm run test
+
+# (No packages to install — backend/server.py uses only the Python standard library)
+pip install -r backend/requirements.txt
 
 # Start the local demo backend (login, org policy, event log)
 npm run backend

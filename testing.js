@@ -248,7 +248,7 @@ function iconCircle(slide, iconName, cx, cy, d, circleColor, iconScale) {
   const layerW = 6.85;
   const layers = [
     { icon: 'chromeWhite', title: 'Chrome Extension', subs: ['Login', 'Detect sensitive data', 'Enforce policy'] },
-    { icon: 'serverWhite', title: 'FastAPI Backend', subs: ['Authentication', 'Organization identification', 'Policy retrieval'] },
+    { icon: 'serverWhite', title: 'Python Backend', subs: ['Authentication', 'Organization identification', 'Policy retrieval'] },
     { icon: 'databaseWhite', title: 'SQLite Database', subs: ['Users', 'Organizations', 'Policies'] },
     { icon: 'cogsWhite', title: 'Protection Engine', subs: ['PII detection', 'API key detection', 'Risk evaluation'] },
   ];
@@ -373,11 +373,11 @@ function iconCircle(slide, iconName, cx, cy, d, circleColor, iconScale) {
 
   const stack = [
     { icon: 'chrome', label: 'Chrome\nExtension' },
-    { icon: 'code', label: 'JavaScript /\nHTML / CSS' },
-    { icon: 'server', label: 'FastAPI' },
+    { icon: 'code', label: 'TypeScript /\nReact 18' },
+    { icon: 'server', label: 'Vite' },
     { icon: 'python', label: 'Python' },
     { icon: 'database', label: 'SQLite' },
-    { icon: 'jwt', label: 'JWT\nAuthentication' },
+    { icon: 'jwt', label: 'Token-Based\nAuth' },
     { icon: 'search', label: 'Sensitive Data\nDetection Engine' },
   ];
 

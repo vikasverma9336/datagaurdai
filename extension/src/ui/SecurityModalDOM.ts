@@ -65,10 +65,10 @@ export class SecurityModalDOM {
       left: 50%;
       transform: translate(-50%, -50%);
       background: white;
-      border-radius: 12px;
-      padding: 32px;
+      border-radius: 10px;
+      padding: 20px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 400px;
+      max-width: 320px;
       width: 90%;
       z-index: 999999;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -124,17 +124,18 @@ export class SecurityModalDOM {
     const riskColor = riskColors[risk.level] || "#6b7280";
 
     // Build header
+    const logoUrl = chrome.runtime.getURL("icons/icon-128.png");
     const header = document.createElement("div");
     header.style.cssText = `
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
     `;
     header.innerHTML = `
-      <div style="font-size: 48px; margin-bottom: 12px;">⚠️</div>
-      <h2 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1f2937;">
+      <img src="${logoUrl}" alt="DataGuard AI" style="display: block; position: static; float: none; width: 40px; height: 40px; margin: 0 auto 8px auto; max-width: 40px; top: auto; left: auto; right: auto; bottom: auto; transform: none;" />
+      <h2 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #1f2937;">
         Security Warning
       </h2>
-      <p style="margin: 0; font-size: 13px; color: #6b7280;">
+      <p style="margin: 0; font-size: 12px; color: #6b7280;">
         Sensitive data detected in your prompt
       </p>
     `;
@@ -144,9 +145,9 @@ export class SecurityModalDOM {
     detectionsList.style.cssText = `
       background: #f9fafb;
       border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 16px;
-      font-size: 13px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
     `;
 
     const entityCounts: { [key: string]: number } = {};
@@ -167,15 +168,15 @@ export class SecurityModalDOM {
     for (const [type, count] of Object.entries(entityCounts)) {
       const label = entityLabels[type] || type;
       detectionHTML += `
-        <div style="padding: 4px 0; display: flex; justify-content: space-between; align-items: center;">
+        <div style="padding: 3px 0; display: flex; justify-content: space-between; align-items: center;">
           <span style="color: #374151;">${label}</span>
           <span style="
             display: inline-block;
             background: ${this.getTypeColor(type)};
             color: white;
-            padding: 2px 8px;
+            padding: 1px 7px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
           ">
             ${count}
@@ -192,30 +193,30 @@ export class SecurityModalDOM {
       background: ${riskColor}20;
       border-left: 4px solid ${riskColor};
       border-radius: 4px;
-      padding: 12px;
-      margin-bottom: 20px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
     `;
     riskSection.innerHTML = `
-      <div style="font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">RISK SCORE</div>
-      <div style="font-size: 24px; font-weight: 700; color: ${riskColor};">
+      <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 2px;">RISK SCORE</div>
+      <div style="font-size: 19px; font-weight: 700; color: ${riskColor};">
         ${risk.score}/100
       </div>
-      <div style="font-size: 13px; font-weight: 600; color: ${riskColor}; margin-top: 4px;">
+      <div style="font-size: 12px; font-weight: 600; color: ${riskColor}; margin-top: 2px;">
         ${risk.level}
       </div>
     `;
 
     const orgSection = document.createElement("div");
     orgSection.style.cssText = `
-      padding: 10px 12px;
-      margin-bottom: 16px;
+      padding: 7px 10px;
+      margin-bottom: 10px;
       border: 1px solid #e5e7eb;
       border-radius: 6px;
       color: #374151;
-      font-size: 13px;
+      font-size: 12px;
     `;
     orgSection.innerHTML = `
-      <div style="font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">ORGANIZATION POLICY</div>
+      <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 2px;">ORGANIZATION POLICY</div>
       <div>${organizationName || "Default Local Policy"}: <strong>${recommendedAction}</strong></div>
     `;
 
@@ -229,7 +230,7 @@ export class SecurityModalDOM {
     const buttonsSection = document.createElement("div");
     buttonsSection.style.cssText = `
       display: grid;
-      gap: 8px;
+      gap: 6px;
     `;
 
     for (const action of ["BLOCK", "REDACT", "ALLOW"] as const) {
@@ -237,10 +238,10 @@ export class SecurityModalDOM {
       const isRecommended = action === recommendedAction;
       btn.innerHTML = actionLabels[action];
       btn.style.cssText = `
-        padding: 10px 16px;
+        padding: 8px 14px;
         border: ${isRecommended ? "2px solid" : "1px solid"} #e5e7eb;
         border-radius: 6px;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
