@@ -234,10 +234,10 @@ Expected:
 
 ### Privacy Guarantees
 
-✅ **All processing is local** in the browser
-✅ **No external APIs** are called
-✅ **No backend services** are used
-✅ **No sensitive data storage** (no localStorage, no cookies)
+✅ **Detection and redaction happen entirely locally** in the browser
+✅ **No external (third-party) APIs** are called
+✅ **No raw prompt text ever leaves the browser** — the local backend only receives login email, and event metadata (types/scores, not content)
+✅ **No sensitive data storage** (no localStorage, no cookies for prompt content)
 ✅ **No raw prompt logging** to browser console
 ✅ **No third-party integrations**
 
@@ -248,14 +248,16 @@ Expected:
 - API keys are **never stored**
 - Passwords are **never stored**
 - Raw prompts are **not retained** after processing
+- Only the session (token, user, org, policy) is persisted, in `chrome.storage.local`
 
 ### What Happens
 
 1. User types/pastes prompt
 2. Extension detects sensitive patterns **locally**
-3. Risk score calculated **in-memory**
+3. Risk score calculated **in-memory**, org policy applied if logged in
 4. User makes decision (BLOCK/REDACT/ALLOW)
-5. Data is cleared — nothing persists
+5. Event metadata (not prompt content) is optionally sent to the local backend for the audit log
+6. Prompt data is cleared — nothing about its content persists
 
 ## 🎯 Supported Applications
 
@@ -503,11 +505,13 @@ Modern enterprise security design with:
 
 ### Extension Popup
 
-Clean status dashboard showing:
+Login and status dashboard showing:
 
-- Protection status (Active ✓)
-- Protected applications (ChatGPT ✓)
-- Local detection status (Enabled ✓)
+- Organization login (pick one of the 4 demo users, connect/disconnect)
+- Connection status (Connected / Offline)
+- Active organization and whether org or default local policy is in effect
+- Protected applications (ChatGPT)
+- The signed-in org's policy per entity type
 - Privacy guarantee
 
 ## 🔄 How It Works
@@ -549,9 +553,10 @@ Risk engine calculates:
 
 Policy engine recommends action:
 
-1. Check for blocking entities (SECRET, CREDIT_CARD)
-2. Check for redactable entities (EMAIL, PHONE, etc.)
-3. Return recommended action
+1. If a user is logged in, check the organization's policy for each detected type first (BLOCK > REDACT)
+2. Otherwise (or for types with no org rule), check for blocking entities (SECRET, CREDIT_CARD)
+3. Check for redactable entities (EMAIL, PHONE, etc.)
+4. Return recommended action
 
 ### Step 6: User Decision
 
@@ -628,6 +633,10 @@ dataguard-ai/
 │   ├── vite.config.ts
 │   └── vitest.config.ts
 │
+├── backend/
+│   ├── server.py                       # Login, org policy, event log (SQLite)
+│   └── dataguard.db                    # Auto-created on first run
+│
 ├── tests/
 │   ├── detector.test.ts                # Detector tests
 │   ├── riskEngine.test.ts              # Risk engine tests
@@ -658,13 +667,18 @@ Minimal permissions requested:
 
 ```json
 {
-  "permissions": ["scripting"],
+  "permissions": ["scripting", "storage"],
   "host_permissions": [
     "https://chatgpt.com/*",
-    "https://chat.openai.com/*"
+    "https://chat.openai.com/*",
+    "http://localhost:8000/*"
   ]
 }
 ```
+
+- `scripting` / host permissions on ChatGPT — inject the content script that intercepts prompts
+- `storage` — persist the logged-in session (token, user, org, policy) via `chrome.storage.local`
+- `localhost:8000` host permission — talk to the local demo backend for login/policy/events
 
 **NOT requested** (and not needed):
 - ❌ tabs
@@ -676,7 +690,7 @@ Minimal permissions requested:
 
 ## 🔮 Future Enterprise Architecture
 
-This POC demonstrates the core security capability. A future enterprise version could add:
+The local demo backend already proves out multi-organization login, centralized policy, and basic event logging (see [Organizations & Policies](#-organizations--policies)). A production enterprise version would still need to add:
 
 ```
                     DataGuard AI SaaS
@@ -685,10 +699,10 @@ This POC demonstrates the core security capability. A future enterprise version 
                            │
                          Admin
                            │
-                       Backend
+                  Hosted Backend (multi-tenant)
                     ┌──────┴──────┐
                     │             │
-                  Policy        Audit
+             Policy Console   Audit Dashboards
                     │             │
                     └──────┬──────┘
                            │
@@ -699,18 +713,15 @@ This POC demonstrates the core security capability. A future enterprise version 
 
 ### Potential Enterprise Features
 
-- ✨ Multi-organization support
-- ✨ Organization admins
-- ✨ Centralized policies
-- ✨ Audit logs and dashboards
-- ✨ SSO integration
-- ✨ RBAC (Role-Based Access Control)
+- ✨ Real authentication (SSO, not the demo email-only login)
+- ✨ RBAC — currently `role` is stored per user but not enforced by the policy engine
+- ✨ Admin console for editing policies (currently seeded directly in SQLite)
+- ✨ Hosted, multi-tenant backend (currently `localhost` only)
+- ✨ Audit log dashboards / SIEM export (currently raw rows in SQLite)
 - ✨ Support for Claude, Gemini, Copilot
-- ✨ Slack integration
-- ✨ GitHub integration
-- ✨ SIEM integration
+- ✨ Slack / GitHub integration
 
-**These are NOT implemented in the POC** — only the local detection core.
+**Already implemented in this POC**: local detection, risk scoring, multi-organization policies, login-gated policy sync, and event logging to a local backend.
 
 ## 🧪 Testing Checklist
 
@@ -718,12 +729,16 @@ This POC demonstrates the core security capability. A future enterprise version 
 □ npm install          # Dependencies installed
 □ npm run build        # Build succeeds without errors
 □ npm run test         # All tests pass
+□ npm run backend      # Backend starts at localhost:8000
 □ Extension loads      # chrome://extensions load unpacked works
+□ Login works          # Popup login succeeds for a demo user, policy shown
 □ ChatGPT intercepts   # Prompt submission paused
 □ Modal displays       # Security modal appears when needed
+□ Org policy applies   # FinanceCorp user gets BLOCK, TechCorp user gets REDACT
 □ BLOCK works          # Request blocked, prevented submission
 □ REDACT works         # Sensitive data replaced, sanitized prompt sent
 □ ALLOW works          # Original prompt submitted unchanged
+□ Event logged         # Backend records the event without prompt content
 □ No logging           # Browser console has no raw sensitive data
 ```
 
@@ -733,11 +748,12 @@ This POC:
 
 - Supports ChatGPT only (easily extended to other AI platforms)
 - Uses rule-based detection (not ML)
-- Has no centralized enterprise policies
-- Has no backend logging or audit trail
-- Has no admin dashboard
-- Does not support multiple organizations
-- Does not have SSO/authentication
+- Org policies are seeded directly in SQLite — no admin UI to edit them
+- `role` (admin/employee) is stored per user but not enforced — everyone in an org gets the same policy
+- Login is email-only with a trivially-derived token (`userId:orgSlug`) — a demo mechanism, not real authentication
+- Backend is a single local SQLite instance, not multi-tenant or hosted
+- No audit dashboard — events are raw rows in `dataguard.db`
+- Does not have SSO
 
 These can be added in a future enterprise version.
 
@@ -766,12 +782,16 @@ npm run build
 # Test
 npm run test
 
+# Start the local backend (separate terminal)
+npm run backend
+
 # Load in Chrome
 # 1. chrome://extensions
 # 2. Load unpacked
 # 3. Select extension/dist/
-# 4. Open chatgpt.com
-# 5. Test with demo prompts
+# 4. Click the extension icon, log in as a demo user
+# 5. Open chatgpt.com
+# 6. Test with demo prompts
 ```
 
 ---
