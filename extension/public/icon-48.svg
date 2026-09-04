@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="48" height="48" rx="10" fill="#1e293b"/>
+  
+  <!-- Shield -->
+  <path d="M24 8L12 15v7c0 9 12 14 12 14s12-5 12-14v-7L24 8Z" stroke="#0ea5e9" stroke-width="2" fill="none"/>
+  
+  <!-- Lock -->
+  <rect x="20" y="20" width="8" height="10" rx="1" stroke="#10b981" stroke-width="1.5" fill="none"/>
+  <circle cx="24" cy="23" r="1" fill="#10b981"/>
+</svg>

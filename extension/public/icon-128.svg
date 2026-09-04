@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#1e293b"/>
+  
+  <!-- Shield -->
+  <path d="M64 20L36 35v18c0 22 28 35 28 35s28-13 28-35V35L64 20Z" stroke="#0ea5e9" stroke-width="3" fill="none"/>
+  
+  <!-- Lock inside shield -->
+  <rect x="56" y="50" width="16" height="24" rx="2" stroke="#10b981" stroke-width="2" fill="none"/>
+  <circle cx="64" cy="56" r="2" fill="#10b981"/>
+  
+  <!-- Checkmark -->
+  <path d="M75 72l4 4l8-12" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

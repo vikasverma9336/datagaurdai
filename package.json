@@ -1,0 +1,24 @@
+{
+  "name": "dataguard-ai",
+  "version": "1.0.0",
+  "description": "DataGuard AI - Secure Enterprise AI Usage",
+  "type": "module",
+  "scripts": {
+    "build": "cd extension && npm run build",
+    "dev": "cd extension && npm run dev",
+    "backend": "python backend/server.py",
+    "test": "cd extension && npm run test",
+    "test:ui": "cd extension && npm run test:ui"
+  },
+  "keywords": [
+    "chrome-extension",
+    "security",
+    "data-protection",
+    "ai-safety"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}
